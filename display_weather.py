@@ -4,6 +4,8 @@ import pandas as pd
 from epd2in13_V4 import EPD
 from PIL import Image, ImageDraw, ImageFont
 
+print('loading weather')
+
 weather_url = "https://api.open-meteo.com/v1/forecast?latitude=39.7392&longitude=-104.9847&hourly=temperature_2m,precipitation,precipitation_probability,wind_speed_10m,wind_direction_10m&timezone=America%2FDenver&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch"
 
 def get_json_from_url(url):
@@ -20,6 +22,7 @@ def get_json_from_url(url):
     
 weather_json = get_json_from_url(weather_url)
 weather_df = pd.DataFrame.from_dict(weather_json['hourly'])
+print('loaded weather dataframe, processing...')
 
 weather_df['time'] = pd.to_datetime(weather_df['time'])
 weather_df['day_name'] = weather_df['time'].dt.strftime('%a')
@@ -42,6 +45,8 @@ day_part_df = weather_df.groupby(['day_name', 'day_part']).agg(
 ).reset_index().sort_values('day_start').drop('day_start', axis=1)
 
 after_work_df = day_part_df[day_part_df['day_part'] == 'after work']
+
+print('done. creating image...')
 
 x_size = 250
 y_size = 122
@@ -71,3 +76,7 @@ for i, row in enumerate(after_work_df.head(n_days).iterrows()):
             current_y_pos += fnt.size + 2
 
 out.save('test.png')
+
+print('done. initializing EPD')
+
+epd = EPD()
