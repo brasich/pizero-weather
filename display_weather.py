@@ -80,7 +80,7 @@ out.save('test.png')
 print('done. initializing EPD')
 
 epd = EPD()
-
+epd.init()
 img = epd.getbuffer(out)
 epd.display(img)
 
