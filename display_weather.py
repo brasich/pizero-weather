@@ -81,7 +81,8 @@ print('done. initializing EPD')
 
 epd = EPD()
 epd.init()
-img = epd.getbuffer(out)
+rotated_image = out.transpose(Image.ROTATE_180)
+img = epd.getbuffer(rotated_image)
 epd.display(img)
 
 print('done')
